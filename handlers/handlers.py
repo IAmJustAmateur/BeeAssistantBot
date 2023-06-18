@@ -171,11 +171,13 @@ async def topic_selection(callback_query: types.CallbackQuery, state: FSMContext
     user = User(callback_query.from_user.id)
 
     context = await get_context(state)
-
     user_answer = callback_query.data
-    #context.set_user_var('course', user_answer)
-    topic = bot_content.get_topic_by_name(user_answer)
-    message_text = f'Here! Your amazing resource from which you can start didving in the topic of interest awaits :) \n\n {topic.url}'
-    await callback_query.bot.send_message(callback_query.from_user.id, message_text)
 
-
+    try:
+        topic = bot_content.get_topic_by_name(user_answer)
+        message_text = f'Here! Your amazing resource from which you can start didving in the topic of interest awaits :) \n\n {topic.url}'
+        await callback_query.bot.send_message(callback_query.from_user.id, message_text)
+        context._context['selected course'] = topic.name
+        #await update_user_dialog_context(state, Bot_States.TopicSelection, context, user)
+    except:
+        logging.info(f'user_answer {user_answer}')

@@ -84,7 +84,6 @@ class Bot_Content():
                 self.topic_selection.append(question)
                 messages = []
 
-
     def load_topics(self):
         content_part: Content_Part = self.content_sources["Topics"]
         cells = content_part.Body
@@ -101,5 +100,3 @@ class Bot_Content():
         topic_names = [topic.name for topic in self.topics]
         ind = topic_names.index(topic_name)
         return self.topics[ind]
-
-
