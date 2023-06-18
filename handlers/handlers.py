@@ -150,15 +150,16 @@ async def next_question(bot: Bot, user_id: int, user_answer: str, question: Ques
 
     #user.set_user_var(question)
 
-    question_index +=1
     context.set_question_index(question_index)
     context.set_user_var(question)
-    question: Question = user_intro[question_index]
 
-    if question_index == len(user_intro) - 1:  # last question
+    if question_index >= len(user_intro) - 1:  # last question
         await update_user_dialog_context(state, Bot_States.TopicSelection, context, user)
+        # question = bot_content.topic_selection
 
     else:
+        question: Question = user_intro[question_index]
+        question_index +=1
         await update_user_dialog_context(state, Bot_States.UserIntro, context, user)
 
     await question.send_messages(bot, user_id, context = context.get_context())

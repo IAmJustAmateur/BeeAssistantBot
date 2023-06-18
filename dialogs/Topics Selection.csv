@@ -1,0 +1,5 @@
+Bot Message,var,answer_options
+Thank you!,,
+What do you want to learn about?,user_level,"{""A"":[start recycling, sustainable habits, crash course about climate]
+""B"" [SDG, renewable energy, climate conferences]
+""C"":[GHG scopes 1,2,3, carbon removal, top 5 university programs]}"
