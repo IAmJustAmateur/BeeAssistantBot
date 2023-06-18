@@ -17,6 +17,7 @@ def get_state_name(state: FSMContext, user_id: int):
         state_name = None
     return state_name
 
+
 def get_bot_state_name(state: State):
     state_name = state.state.split(':')[1]
     return state_name

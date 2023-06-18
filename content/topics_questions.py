@@ -73,9 +73,11 @@ class Question():
 
 class TopicSelectionQuestion(Question):
 
-    def __init__(self, messages: List[str],
-                answer_options: List[str] | Dict |None,
-                user_var: Optional[str|List[str]] = None,
+    def __init__(
+                    self,
+                    messages: List[str],
+                    answer_options: List[str] | Dict |None,
+                    user_var: Optional[str|List[str]] = None,
                 ):
 
         self._messages = messages
@@ -99,7 +101,7 @@ class TopicSelectionQuestion(Question):
 
 
 class Topic():
-    def __init__(self, name: str,  title:str, url: str):
+    def __init__(self, name: str,  title: str, url: str):
         self.name = name
         self.title = title
         self.url = url

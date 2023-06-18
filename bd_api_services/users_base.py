@@ -1,5 +1,4 @@
-import os
-from typing import Dict, List, Tuple
+from typing import Dict, List
 import logging
 from datetime import datetime, timezone
 from supabase import create_client, Client
@@ -7,14 +6,16 @@ from config import SUPABASE_URL, SUPABASE_KEY, SUPABASE_TABLE
 
 
 class Base_Exception(Exception):
-    def __init__(self, message = 'database access error') -> None:
+    def __init__(self, message='database access error') -> None:
         self.message = message
         super().__init__(self.message)
+
 
 class User_Data_Exception(Exception):
     def __init__(self, message = 'database structure error') -> None:
         self.message = message
         super().__init__(self.message)
+
 
 class Users_Base:
     def __init__(self):
@@ -31,11 +32,12 @@ class Users_Base:
         return False
 
     def create_bot_user(self, user_id, user_info: Dict = {}):
-        time_update = str(datetime.now(timezone.utc))
-        #request = dict({"id": user_id}, **dict(user_info, **{"time_update": time_update}))
+        # time_update = str(datetime.now(timezone.utc))
+        # request = dict({"id": user_id}, **dict(user_info, **{"time_update": time_update}))
         request = dict({"id": user_id})
         try:
-            data, count = self.table.insert(request).execute()  # replace with upsert
+            # replace with upsert
+            data, count = self.table.insert(request).execute()
             return data
         except Exception as e:
             logging.info(e)
@@ -44,7 +46,7 @@ class Users_Base:
     def delete_bot_user(self, user_id):
         try:
             self.table.delete().match({"id": user_id}).execute()
-        except Exception as e:
+        except Exception:
             raise Base_Exception
 
     def update_user_info(self, user_id, user_info: Dict):
@@ -69,7 +71,6 @@ class Users_Base:
             logging.debug(e)
             raise User_Data_Exception
 
-
     def set_user_var(self, user_id, var, value):
         try:
             user_info = self.get_user_info(user_id)
@@ -85,4 +86,3 @@ class Users_Base:
 
     def reset_user(self, user_id):
         self.update_user_info(user_id, user_info=None)
-

@@ -7,10 +7,8 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from bd_api_services.users_base import Users_Base
 
 
-
 from config import BOT_TOKEN
 from content.bot_content import Bot_Content
-
 from content.csv_content_loader import content_loader
 
 content_folder = "Dialogs"
@@ -27,10 +25,16 @@ content_dict = {
     "Weather": "Dialogs-Weather.csv",
 }
 
+
 @pytest.fixture(scope='session')
 def bot_content() -> Bot_Content:
-    bc =  Bot_Content( content_sources=content_dict, content_loader=content_loader, content_folder=content_folder)
+    bc = Bot_Content(
+        content_sources=content_dict,
+        content_loader=content_loader,
+        content_folder=content_folder
+    )
     return bc
+
 
 @pytest.fixture(scope='function')
 def dp() -> Dispatcher:
@@ -38,10 +42,12 @@ def dp() -> Dispatcher:
     storage = MemoryStorage()
     return Dispatcher(bot, storage=storage)
 
+
 @pytest.fixture(scope='session')
 def base() -> Users_Base:
     users_base = Users_Base()
     return users_base
+
 
 @pytest.fixture(scope="function")
 def test_user1(base: Users_Base):
@@ -66,6 +72,7 @@ def test_user1(base: Users_Base):
     base.create_bot_user(test_user_id, user_info)
     return test_user_id
 
+
 @pytest.fixture(scope="function")
 def test_user2(base: Users_Base):
     test_user_id = 77777
@@ -87,6 +94,7 @@ def test_user2(base: Users_Base):
     }
     base.create_bot_user(test_user_id, user_info)
     return test_user_id
+
 
 @pytest.fixture(scope='function')
 def handlers_test_user(base: Users_Base) -> int:
@@ -111,14 +119,16 @@ def handlers_test_user(base: Users_Base) -> int:
     base.create_bot_user(test_user_id, user_info)
     return test_user_id
 
+
 @pytest.fixture(scope='function')
 def state(dp: Dispatcher, handlers_test_user: int) -> FSMContext:
     state = FSMContext(
-        storage = dp.storage,
-        user = handlers_test_user,
-        chat = handlers_test_user,
+        storage=dp.storage,
+        user=handlers_test_user,
+        chat=handlers_test_user,
     )
     return state
+
 
 @pytest.fixture(scope='function')
 def callback_query(handlers_test_user: int) -> AsyncMock:
@@ -126,6 +136,7 @@ def callback_query(handlers_test_user: int) -> AsyncMock:
     cq.from_user.id = handlers_test_user
     cq.bot = AsyncMock()
     return cq
+
 
 @pytest.fixture(scope='function')
 def message(handlers_test_user: int) -> AsyncMock:

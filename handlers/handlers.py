@@ -200,6 +200,18 @@ async def continue_or_not(callback_query: types.CallbackQuery, state: FSMContext
         question = bot_content.topic_selection[0]
         await question.send_messages(callback_query.bot, callback_query.from_user.id, context = context.get_context())
     elif user_answer == 'No':
-        message_text = 'It was a great pleasure talking to you! Having around someone interested in ecology is really precious.\n Hope to see you soon 🙌'
-        await callback_query.bot.send_message(callback_query.from_user.id, message_text)
-        await update_user_dialog_context(state, Bot_States.Sleep, context, user)
+        message_text = (
+            'It was a great pleasure talking to you!'
+            'Having around someone interested in ecology is really precious.\n'
+            'Hope to see you soon 🙌'
+        )
+        await callback_query.bot.send_message(
+            callback_query.from_user.id,
+            message_text
+        )
+        await update_user_dialog_context(
+            state,
+            Bot_States.Sleep,
+            context,
+            user
+        )

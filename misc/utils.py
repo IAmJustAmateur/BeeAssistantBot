@@ -3,15 +3,13 @@ import json
 import re
 from datetime import datetime
 from functools import wraps
-import time
-from string import Template
 from timezonefinder import TimezoneFinder
 
-#from tzwhere import tzwhere as tw
 
 import pytz
 
-def get_cell_value(cell: Any) -> Any|None:
+
+def get_cell_value(cell: Any) -> Any | None:
     '''
     return google spreadsheet cell value or None
     '''
@@ -19,7 +17,8 @@ def get_cell_value(cell: Any) -> Any|None:
         return cell
     return None
 
-def get_user_variables(cell: Any) -> str|List[str]|None:
+
+def get_user_variables(cell: Any) -> str | List[str] | None:
     '''
     return user variable or user variable list
     '''
@@ -32,7 +31,8 @@ def get_user_variables(cell: Any) -> str|List[str]|None:
     else:
         return None
 
-def get_json_value(cell: str | None) -> List|Dict|str|None:
+
+def get_json_value(cell: str | None) -> List | Dict | str | None:
     if not cell:
         return None
     try:
@@ -41,7 +41,8 @@ def get_json_value(cell: str | None) -> List|Dict|str|None:
         result = cell
     return result
 
-def get_options_list(cell_value: str|None) -> List[str]|Dict|None:
+
+def get_options_list(cell_value: str | None) -> List[str] | Dict | None:
     '''
     return Dict if cell_value is Dict
     if not split str by \n
@@ -57,11 +58,11 @@ def get_options_list(cell_value: str|None) -> List[str]|Dict|None:
     except:
         pass
 
-
     options = list(map(lambda s: s.strip(), cell_value.split("\n")))
     return options
 
-def quiz_answer_options(cell_value: str|None) -> Dict|None:
+
+def quiz_answer_options(cell_value: str|None) -> Dict | None:
     '''
     split str by \n
 
@@ -71,22 +72,25 @@ def quiz_answer_options(cell_value: str|None) -> Dict|None:
     options = {}
     option_list = list(map(lambda s: s.strip(), cell_value.split("\n")))
     for option in option_list:
-        options[option]= option
+        options[option] = option
     return options
 
 
-def list_from_long_str(s: str, delimeter: str) ->List[str]|str|None:
+def list_from_long_str(s: str, delimeter: str) -> List[str] | str | None:
     '''
     split str by delimeter
     '''
-    if not str: return None
-    if str == "": return None
+    if not str:
+        return None
+    if str == "":
+        return None
     ls = s.split(delimeter)
     if ls[0].startswith(delimeter):
         ls[0] = ls[0][1:]
     if len(ls) == 1:
         return ls[0]
     return ls
+
 
 def flat_list(options: List[Any] | Dict) -> List[str]:
     '''
@@ -96,7 +100,7 @@ def flat_list(options: List[Any] | Dict) -> List[str]:
     - int
     '''
     result: List[str] = []
-    if type(options)  == list:
+    if type(options) == list:
         for list_item in options:
             if type(list_item) == list:
                 for item in list_item:
@@ -112,6 +116,7 @@ def flat_list(options: List[Any] | Dict) -> List[str]:
 
     return result
 
+
 def merge_dict(d1: Dict, d2: Dict) -> Dict:
     '''
     merge 2 dictionary
@@ -122,6 +127,7 @@ def merge_dict(d1: Dict, d2: Dict) -> Dict:
         return d1
 
     return dict(d1, **d2)
+
 
 def get_utc_time_str(coords: Dict, time_str: str):
     '''
@@ -138,17 +144,18 @@ def get_utc_time_str(coords: Dict, time_str: str):
     elif "-" in time_str:
         delimeter = '-'
 
-    h,m = [int (x) for x in time_str.split(delimeter)[0:2]]
+    h, m = [int(x) for x in time_str.split(delimeter)[0:2]]
 
     dt = datetime.now()
-    dt = dt.replace(hour = h, minute = m, second = 0)
+    dt = dt.replace(hour=h, minute=m, second=0)
     dt = timezone.localize(dt)
-    #to_zone = tz.gettz('UTC')
+    # to_zone = tz.gettz('UTC')
     to_zone = pytz.timezone('UTC')
     utc = dt.astimezone(to_zone)
     utc_time_str = f'{str(utc.hour).zfill(2)}:{str(utc.minute).zfill(2)}'
 
     return  utc_time_str
+
 
 def process_wakeup_time(time_str: str) -> str:
     '''
@@ -156,15 +163,15 @@ def process_wakeup_time(time_str: str) -> str:
 
     '''
     hours_minutes: List = re.split('[-:.\s]\s*', time_str)
-    if (len(hours_minutes) <2):
+    if (len(hours_minutes) < 2):
         return None
 
     if len(hours_minutes[1]) < 2:
         return None
 
     try:
-       hours = int(hours_minutes[0])
-       minutes = int(hours_minutes[1])
+        hours = int(hours_minutes[0])
+        minutes = int(hours_minutes[1])
     except:
         return None
     if hours < 0 or hours > 24:
@@ -181,22 +188,25 @@ def process_wakeup_time(time_str: str) -> str:
         minutes = 45
     else:
         minutes = 0
-        hours +=1
-        if hours >=24:
+        hours += 1
+        if hours >= 24:
             hours -= 24
     wakeup_time: str = f'{str(hours).zfill(2)}:{str(minutes).zfill(2)}'
 
     return wakeup_time
 
+
 def int_from_answer(answer) -> int | None:
-        try:
-            value = int(answer)
-            return value
-        except:
-            return None
+    try:
+        value = int(answer)
+        return value
+    except:
+        return None
+
 
 def return_self(answer: Any) -> Any:
     return answer
+
 
 def pad_or_truncate(some_list: list[str], target_len):
     '''
@@ -207,36 +217,13 @@ def pad_or_truncate(some_list: list[str], target_len):
     '''
     return some_list[:target_len] + ['']*(target_len - len(some_list))
 
+
 def get_timezome(coords: Dict) -> str:
     '''
     return time zone from coordinates
     '''
-    #tw_0 = tw.tzwhere()
-    #timezone_str = tw_0.tzNameAt(coords["lat"], coords["lon"])
 
     tf = TimezoneFinder()
     timezone_str = tf.timezone_at(lng=coords['lon'], lat=coords['lat'])
 
     return timezone_str
-
-def get_variables(s: str) -> List[str]:
-    variables = re.findall('<<\w+\d*>>', s)
-    return [var[2:-2] for var in variables]
-
-def timeit(func):
-    @wraps(func)
-    def timeit_wrapper(*args, **kwargs):
-        start_time = time.perf_counter()
-        result = func(*args, **kwargs)
-        end_time = time.perf_counter()
-        total_time = end_time - start_time
-        print(f'Function {func.__name__}{args} {kwargs} Took {total_time:.4f} seconds')
-        return result
-    return timeit_wrapper
-
-def get_url(url_template: Template, api_key: str, **kwargs) -> str:
-    # https://api.openweathermap.org/geo/1.0/direct?q=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&limit=10&appid=6c89f7a7671f9d27da859148818c6844
-    k = kwargs
-    k["api_key"] = api_key
-    url = url_template.substitute(k)
-    return url
