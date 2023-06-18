@@ -12,7 +12,8 @@ class Bot_States(StatesGroup):
 
 def get_state_name(state: FSMContext, user_id: int):
     try:
-        state_name = state.storage.data[str(user_id)][str(user_id)]['state'].split(':')[1]
+        state_name = state.storage.data[str(user_id)][str(user_id)] \
+            ['state'].split(':')[1]
     except KeyError:
         state_name = None
     return state_name

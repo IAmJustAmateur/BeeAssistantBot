@@ -2,7 +2,6 @@ from typing import Dict, List, Any
 import json
 import re
 from datetime import datetime
-from functools import wraps
 from timezonefinder import TimezoneFinder
 
 
@@ -62,7 +61,7 @@ def get_options_list(cell_value: str | None) -> List[str] | Dict | None:
     return options
 
 
-def quiz_answer_options(cell_value: str|None) -> Dict | None:
+def quiz_answer_options(cell_value: str | None) -> Dict | None:
     '''
     split str by \n
 

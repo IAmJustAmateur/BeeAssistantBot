@@ -45,26 +45,15 @@ async def send_farewell(
     await state.reset_state()
 
 
-async def send_topic(topic: Topic, state: FSMContext,
-                     context: Context, user: User,
-                     message: Union[types.Message, types.CallbackQuery]):
-    if topic is None:
-        await send_farewell(state, message.bot, context, user)
-        return
-
-
-    topic_dialog:Question = bot_content.get_dialog(DialogStateNames.TopicSelection)
-    await topic_dialog.send_messages(message.bot, message.from_user.id, context=context.get_context())
-
-    await update_user_dialog_context(state, Bot_States.TopicReading,
-                                             context, user)
-
-
 async def start(message: types.Message, state: FSMContext='*'):
 
     bot_intro = bot_content.bot_intro
     question: Question = bot_intro[0]
-    await question.send_messages(message.bot, message.from_user.id, context ={})
+    await question.send_messages(
+        message.bot,
+        message.from_user.id,
+        context ={}
+    )
 
     user = User(message.from_user.id)
     #user.create_by_id()
@@ -80,7 +69,9 @@ async def start(message: types.Message, state: FSMContext='*'):
     )
 
 async def bot_intro(callback_query: types.CallbackQuery, state: FSMContext):
-    logging.info(f"BotIntro, {callback_query.data}, user: {callback_query.from_user.id}")
+    logging.info(
+        f"BotIntro, {callback_query.data}, user: {callback_query.from_user.id}"
+    )
     bot_intro_dialog = bot_content.bot_intro
     user = User(callback_query.from_user.id)
 
@@ -93,7 +84,11 @@ async def bot_intro(callback_query: types.CallbackQuery, state: FSMContext):
 
         question_index +=1
         question = bot_intro_dialog[question_index]
-        await question.send_messages(callback_query.bot, callback_query.from_user.id, context=None)
+        await question.send_messages(
+            callback_query.bot,
+            callback_query.from_user.id,
+            context=None
+        )
         context.set_question_index(question_index)
         await update_user_dialog_context(
             state,
@@ -107,23 +102,44 @@ async def bot_intro(callback_query: types.CallbackQuery, state: FSMContext):
         user_intro = bot_content.user_intro
         question: Question = user_intro[0]
         question_index = 0
-        await question.send_messages(callback_query.bot, callback_query.from_user.id, context.get_context())
+        await question.send_messages(
+            callback_query.bot,
+            callback_query.from_user.id,
+            context.get_context()
+        )
         context.set_question_index(question_index)
         await update_user_dialog_context(state, Bot_States.UserIntro,
                                             context,  user)
 
 
 async def user_intro_message(message: types.Message, state: FSMContext) :
-    logging.info(f"UserIntro, message: {message.text}, user: {message.from_user.id}")
+    logging.info(
+        f"UserIntro, message: {message.text}, user: {message.from_user.id}"
+    )
 
-    await user_intro_answer(message, user_id = message.from_user.id, user_answer=message.text, state=state)
+    await user_intro_answer(
+        message,
+        user_id=message.from_user.id,
+        user_answer=message.text,
+        state=state
+    )
 
 async def user_intro_callback(callback_query: types.CallbackQuery, state: FSMContext):
     logging.info(f"UserIntro, callback: {callback_query.data}")
 
-    await user_intro_answer(callback_query, user_id=callback_query.from_user.id, user_answer=callback_query.data, state=state)
+    await user_intro_answer(
+        callback_query,
+        user_id=callback_query.from_user.id,
+        user_answer=callback_query.data,
+        state=state
+    )
 
-async def user_intro_answer(message: Union[types.Message, types.CallbackQuery], user_id: int, user_answer: str, state: FSMContext):
+async def user_intro_answer(
+        message: Union[types.Message, types.CallbackQuery],
+        user_id: int,
+        user_answer: str,
+        state: FSMContext
+    ):
 
     context = await get_context(state)
     question_index = context.get_question_index()
@@ -134,17 +150,26 @@ async def user_intro_answer(message: Union[types.Message, types.CallbackQuery], 
 
     context.set_user_var(question)
 
-    await next_question(message.bot,
-                        user_id = user_id,
-                        user_answer=user_answer,
-                        question=question,
-                        question_index=question_index,
-                        context=context,
-                        state=state
-                        )
+    await next_question(
+        message.bot,
+        user_id = user_id,
+        user_answer=user_answer,
+        question=question,
+        question_index=question_index,
+        context=context,
+        state=state
+    )
 
 
-async def next_question(bot: Bot, user_id: int, user_answer: str, question: Question, question_index: int, context: Context, state=FSMContext):
+async def next_question(
+        bot: Bot,
+        user_id: int,
+        user_answer: str,
+        question: Question,
+        question_index: int,
+        context: Context,
+        state=FSMContext
+    ):
 
     user_intro = bot_content.user_intro
     user = User(user_id)
@@ -155,20 +180,38 @@ async def next_question(bot: Bot, user_id: int, user_answer: str, question: Ques
     context.set_user_var(question)
 
     if question_index >= len(user_intro) - 1:  # last question
-        await update_user_dialog_context(state, Bot_States.TopicSelection, context, user)
+        await update_user_dialog_context(
+            state,
+            Bot_States.TopicSelection,
+            context,
+            user
+        )
         question = bot_content.topic_selection[0]
         #await question.send_messages(bot, user_id, context.get_context())
 
     else:
         question: Question = user_intro[question_index]
         question_index +=1
-        await update_user_dialog_context(state, Bot_States.UserIntro, context, user)
+        await update_user_dialog_context(
+            state,
+            Bot_States.UserIntro,
+            context,
+            user
+        )
 
     await question.send_messages(bot, user_id, context = context.get_context())
 
-async def topic_selection(callback_query: types.CallbackQuery, state: FSMContext):
-    logging.info(f"TopicSelection, {callback_query.data}, user: {callback_query.from_user.id}")
-    #topic_selection = bot_content.topic_selection
+async def topic_selection(
+        callback_query: types.CallbackQuery,
+        state: FSMContext
+        ):
+    logging.info(
+        (
+            f"TopicSelection, {callback_query.data},"
+            f"user: {callback_query.from_user.id}"
+        )
+    )
+    # topic_selection = bot_content.topic_selection
     user = User(callback_query.from_user.id)
 
     context = await get_context(state)
@@ -176,32 +219,69 @@ async def topic_selection(callback_query: types.CallbackQuery, state: FSMContext
 
     try:
         topic = bot_content.get_topic_by_name(user_answer)
-        message_text = f'Here! Your amazing resource from which you can start didving in the topic of interest awaits :) \n\n {topic.url}'
-        await callback_query.bot.send_message(callback_query.from_user.id, message_text)
+        message_text = (
+            f'Here! Your amazing resource from which '
+            f'you can start didving in the topic of interest awaits :)'
+            f'\n\n {topic.url}'
+        )
+        await callback_query.bot.send_message(
+            callback_query.from_user.id,
+            message_text
+        )
         context._context['selected course'] = topic.name
 
-        next_message_text = 'I wish you great learning! 😊\nDo you want to choose another topic?'
-        await callback_query.bot.send_message(callback_query.from_user.id, next_message_text, reply_markup=create_yes_no_keyboard())
-        await update_user_dialog_context(state, Bot_States.ContinueOrNot, context, user)
+        next_message_text = \
+            (
+                'I wish you great learning! 😊\n'
+                'Do you want to choose another topic?'
+            )
+
+        await callback_query.bot.send_message(
+            callback_query.from_user.id,
+            next_message_text,
+            reply_markup=create_yes_no_keyboard()
+        )
+        await update_user_dialog_context(
+            state,
+            Bot_States.ContinueOrNot,
+            context,
+            user
+        )
 
     except:
         logging.info(f'user_answer {user_answer}')
 
-async def continue_or_not(callback_query: types.CallbackQuery, state: FSMContext):
-    logging.info(f"ContinueorNot, {callback_query.data}, user: {callback_query.from_user.id}")
-    #topic_selection = bot_content.topic_selection
+async def continue_or_not(
+        callback_query: types.CallbackQuery,
+        state: FSMContext
+    ):
+    logging.info(
+        (
+            f"ContinueorNot, {callback_query.data},"
+            f"user: {callback_query.from_user.id}")
+        )
+    # topic_selection = bot_content.topic_selection
     user = User(callback_query.from_user.id)
 
     context = await get_context(state)
     user_answer = callback_query.data
 
     if user_answer == 'Yes':
-        await update_user_dialog_context(state, Bot_States.TopicSelection, context, user)
+        await update_user_dialog_context(
+            state,
+            Bot_States.TopicSelection,
+            context,
+            user
+        )
         question = bot_content.topic_selection[0]
-        await question.send_messages(callback_query.bot, callback_query.from_user.id, context = context.get_context())
+        await question.send_messages(
+            callback_query.bot,
+            callback_query.from_user.id,
+            context=context.get_context()
+        )
     elif user_answer == 'No':
         message_text = (
-            'It was a great pleasure talking to you!'
+            'It was a great pleasure talking to you! '
             'Having around someone interested in ecology is really precious.\n'
             'Hope to see you soon 🙌'
         )
