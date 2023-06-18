@@ -156,7 +156,7 @@ async def next_question(bot: Bot, user_id: int, user_answer: str, question: Ques
     if question_index >= len(user_intro) - 1:  # last question
         await update_user_dialog_context(state, Bot_States.TopicSelection, context, user)
         question = bot_content.topic_selection[0]
-        await question.send_messages(bot, user_id, context.get_context())
+        #await question.send_messages(bot, user_id, context.get_context())
 
     else:
         question: Question = user_intro[question_index]
@@ -171,4 +171,11 @@ async def topic_selection(callback_query: types.CallbackQuery, state: FSMContext
     user = User(callback_query.from_user.id)
 
     context = await get_context(state)
+
+    user_answer = callback_query.data
+    #context.set_user_var('course', user_answer)
+    topic = bot_content.get_topic_by_name(user_answer)
+    message_text = f'Here! Your amazing resource from which you can start didving in the topic of interest awaits :) \n\n {topic.url}'
+    await callback_query.bot.send_message(callback_query.from_user.id, message_text)
+
 

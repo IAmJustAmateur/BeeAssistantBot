@@ -98,8 +98,8 @@ class TopicSelectionQuestion(Question):
         return answer_options
 
 
-
 class Topic():
-    def __init__(self, title:str, urls: List[str]):
+    def __init__(self, name: str,  title:str, url: str):
+        self.name = name
         self.title = title
-        self._urls = urls
+        self.url = url

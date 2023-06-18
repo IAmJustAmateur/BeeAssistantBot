@@ -2,7 +2,7 @@ from collections import namedtuple
 from typing import List, Dict, Callable
 import logging
 
-from content.topics_questions import Question, TopicSelectionQuestion
+from content.topics_questions import Question, TopicSelectionQuestion, Topic
 
 
 from content.bot_commands import Bot_Command
@@ -27,7 +27,7 @@ class Bot_Content():
         self.load_user_intro()
         self.load_commands()
         self.load_topic_selection()
-        #self.load_topics()
+        self.load_topics()
 
         logging.info("content loaded")
 
@@ -85,7 +85,21 @@ class Bot_Content():
                 messages = []
 
 
-
     def load_topics(self):
         content_part: Content_Part = self.content_sources["Topics"]
+        cells = content_part.Body
+        self.topics: List[Topic] = []
+        for row in cells:
+            row = pad_or_truncate(row, 3)
+            topic_name = row[0]
+            title = row[1]
+            url = row[2]
+            topic = Topic(topic_name, title, url)
+            self.topics.append(topic)
+
+    def get_topic_by_name(self, topic_name) -> Topic:
+        topic_names = [topic.name for topic in self.topics]
+        ind = topic_names.index(topic_name)
+        return self.topics[ind]
+
 

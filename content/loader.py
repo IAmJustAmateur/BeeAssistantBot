@@ -13,7 +13,8 @@ content_dict = {
     "Bot Intro": "Bot Intro.csv",
     "User Intro": "User Intro.csv",
     "Topics Selection": "Topics Selection.csv",
-
+    "Topics": "Topics.csv",
+    
 }
 
 bot_content = Bot_Content(content_loader=content_loader, content_sources=content_dict, content_folder= content_folder)
