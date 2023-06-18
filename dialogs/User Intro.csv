@@ -1,0 +1,7 @@
+Bot Message,User answer options,user_var
+"Choose what defines you best in ecology sphere.
+You are:
+ - a beginner (want to know what's the big deal with climate change or how to start recycling)
+ - a person in the field (took some courses already and want to dive in more in specific topics)
+ - advanced (you can tell what UNFCCC is and want to pursue a career in ecology)","{""Beginer"":""A"", ""Person in the field"":""B"", ""Advanced"":""C""}",user_level
+Thank you!,,
