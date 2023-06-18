@@ -5,14 +5,14 @@
     "version": "0.2.0",
     "configurations": [
 
-            
+
         {
             "name": "Python: Test-Debug",
             "type": "python",
             "request": "launch",
             "module": "pytest",
             "args": [
-                "tests/test_handlers.py",
+                "bd_api_services/tests/test_users_base.py",
                 "-rA"
             ],
             "justMyCode": true

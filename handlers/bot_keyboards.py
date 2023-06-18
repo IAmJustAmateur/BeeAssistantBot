@@ -60,3 +60,7 @@ def create_keyboard(answer_options, row_width = 2):
     elif type(answer_options) == str:
         return create_keyboard_markup(answer_options=[answer_options])
     return
+
+def create_yes_no_keyboard():
+    answer_options = {'Yes': 'Yes', 'No': 'No'}
+    return create_inline_keyboard(answer_options=answer_options, row_width=2)

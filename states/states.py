@@ -6,7 +6,8 @@ class Bot_States(StatesGroup):
     BotIntro = State()
     UserIntro = State()
     TopicSelection = State()
-
+    ContinueOrNot = State()
+    Sleep = State()
 
 
 def get_state_name(state: FSMContext, user_id: int):

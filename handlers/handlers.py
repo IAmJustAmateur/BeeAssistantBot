@@ -19,6 +19,7 @@ from states.dialog_states import DialogStateNames
 from users.users import User
 
 from handlers.context import Context, get_context
+from handlers.bot_keyboards import create_yes_no_keyboard
 
 
 async def update_user_dialog_context(
@@ -178,6 +179,27 @@ async def topic_selection(callback_query: types.CallbackQuery, state: FSMContext
         message_text = f'Here! Your amazing resource from which you can start didving in the topic of interest awaits :) \n\n {topic.url}'
         await callback_query.bot.send_message(callback_query.from_user.id, message_text)
         context._context['selected course'] = topic.name
-        #await update_user_dialog_context(state, Bot_States.TopicSelection, context, user)
+
+        next_message_text = 'I wish you great learning! 😊\nDo you want to choose another topic?'
+        await callback_query.bot.send_message(callback_query.from_user.id, next_message_text, reply_markup=create_yes_no_keyboard())
+        await update_user_dialog_context(state, Bot_States.ContinueOrNot, context, user)
+
     except:
         logging.info(f'user_answer {user_answer}')
+
+async def continue_or_not(callback_query: types.CallbackQuery, state: FSMContext):
+    logging.info(f"ContinueorNot, {callback_query.data}, user: {callback_query.from_user.id}")
+    #topic_selection = bot_content.topic_selection
+    user = User(callback_query.from_user.id)
+
+    context = await get_context(state)
+    user_answer = callback_query.data
+
+    if user_answer == 'Yes':
+        await update_user_dialog_context(state, Bot_States.TopicSelection, context, user)
+        question = bot_content.topic_selection[0]
+        await question.send_messages(callback_query.bot, callback_query.from_user.id, context = context.get_context())
+    elif user_answer == 'No':
+        message_text = 'It was a great pleasure talking to you! Having around someone interested in ecology is really precious.\n Hope to see you soon 🙌'
+        await callback_query.bot.send_message(callback_query.from_user.id, message_text)
+        await update_user_dialog_context(state, Bot_States.Sleep, context, user)

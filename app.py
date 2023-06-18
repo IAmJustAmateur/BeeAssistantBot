@@ -12,7 +12,7 @@ for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
 logging.basicConfig(level=logging.INFO, format=u'%(filename)s [LINE:%(lineno)d] #%(levelname)-8s [%(asctime)s]  %(message)s')
 
-from handlers.handlers import (start, bot_intro, user_intro_message, user_intro_callback, topic_selection, bot_content)
+from handlers.handlers import (start, bot_intro, user_intro_message, user_intro_callback, topic_selection, bot_content, continue_or_not)
 from states.states import Bot_States
 
 
@@ -31,6 +31,7 @@ async def on_startup(dp: Dispatcher):
     dp.register_message_handler(user_intro_message, state=Bot_States.UserIntro)
     dp.register_callback_query_handler(user_intro_callback, state=Bot_States.UserIntro)
     dp.register_callback_query_handler(topic_selection, state=Bot_States.TopicSelection)
+    dp.register_callback_query_handler(continue_or_not, state=Bot_States.ContinueOrNot)
 
 
 if __name__ == '__main__':

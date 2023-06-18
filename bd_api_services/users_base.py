@@ -32,7 +32,8 @@ class Users_Base:
 
     def create_bot_user(self, user_id, user_info: Dict = {}):
         time_update = str(datetime.now(timezone.utc))
-        request = dict({"id": user_id}, **dict(user_info, **{"time_update": time_update}))
+        #request = dict({"id": user_id}, **dict(user_info, **{"time_update": time_update}))
+        request = dict({"id": user_id})
         try:
             data, count = self.table.insert(request).execute()  # replace with upsert
             return data
