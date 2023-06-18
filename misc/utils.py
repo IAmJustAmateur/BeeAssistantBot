@@ -45,7 +45,7 @@ def get_options_list(cell_value: str|None) -> List[str]|Dict|None:
     '''
     return Dict if cell_value is Dict
     if not split str by \n
-    
+
     '''
     if not cell_value:
         return None
@@ -57,14 +57,14 @@ def get_options_list(cell_value: str|None) -> List[str]|Dict|None:
     except:
         pass
 
-    
+
     options = list(map(lambda s: s.strip(), cell_value.split("\n")))
     return options
 
 def quiz_answer_options(cell_value: str|None) -> Dict|None:
     '''
     split str by \n
-    
+
     '''
     if not cell_value:
         return None
@@ -73,7 +73,7 @@ def quiz_answer_options(cell_value: str|None) -> Dict|None:
     for option in option_list:
         options[option]= option
     return options
-    
+
 
 def list_from_long_str(s: str, delimeter: str) ->List[str]|str|None:
     '''
@@ -105,7 +105,7 @@ def flat_list(options: List[Any] | Dict) -> List[str]:
                 result.append(list_item.lower())
             elif type(list_item) == int:
                 result.append(str(list_item))
-        
+
     elif type(options) == dict:
         for option in list(options.values()):
             result.append(str(option).lower())
@@ -126,7 +126,7 @@ def merge_dict(d1: Dict, d2: Dict) -> Dict:
 def get_utc_time_str(coords: Dict, time_str: str):
     '''
     transform time_str into UTC time_str using coordinates
-    
+
     '''
     timezone_str = get_timezome(coords)
     timezone = pytz.timezone(timezone_str)
@@ -137,7 +137,7 @@ def get_utc_time_str(coords: Dict, time_str: str):
         delimeter = '.'
     elif "-" in time_str:
         delimeter = '-'
-   
+
     h,m = [int (x) for x in time_str.split(delimeter)[0:2]]
 
     dt = datetime.now()
@@ -149,7 +149,7 @@ def get_utc_time_str(coords: Dict, time_str: str):
     utc_time_str = f'{str(utc.hour).zfill(2)}:{str(utc.minute).zfill(2)}'
 
     return  utc_time_str
-    
+
 def process_wakeup_time(time_str: str) -> str:
     '''
     process time_str, round up to 15 minutes
@@ -161,7 +161,7 @@ def process_wakeup_time(time_str: str) -> str:
 
     if len(hours_minutes[1]) < 2:
         return None
-        
+
     try:
        hours = int(hours_minutes[0])
        minutes = int(hours_minutes[1])
@@ -210,7 +210,7 @@ def pad_or_truncate(some_list: list[str], target_len):
 def get_timezome(coords: Dict) -> str:
     '''
     return time zone from coordinates
-    '''   
+    '''
     #tw_0 = tw.tzwhere()
     #timezone_str = tw_0.tzNameAt(coords["lat"], coords["lon"])
 

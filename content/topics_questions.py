@@ -62,7 +62,10 @@ class Question():
             await bot.send_message(user_id, bot_message, reply_markup=ReplyKeyboardRemove())
             await sleep(0.5)
 
-        answer_options = self.answer_options
+        if isinstance(self, TopicSelectionQuestion):
+            answer_options = self.select_answer_options(context["user_level"])
+        else:
+            answer_options = self.answer_options
 
         kb = create_keyboard(answer_options, row_width=1)
         await bot.send_message(user_id, self._messages[-1], reply_markup=kb)
@@ -70,17 +73,33 @@ class Question():
 
 class TopicSelectionQuestion(Question):
 
+    def __init__(self, messages: List[str],
+                answer_options: List[str] | Dict |None,
+                user_var: Optional[str|List[str]] = None,
+                ):
+
+        self._messages = messages
+
+        tmp_answer_options = dict()
+        for key in answer_options.keys():
+            v = answer_options[key]
+            answer_option = dict()
+            for i in range(len(v)):
+                answer_option[v[i]] = v[i]
+            tmp_answer_options[key] = answer_option
+
+        self._answer_options = dict(tmp_answer_options)
+
+        self. _user_var = user_var
+        self._answer = None
+
     def select_answer_options(self, var_value) -> Dict:
         answer_options = self.answer_options[var_value]
         return answer_options
 
-    @property
-    def answer_options(self, user_var_value):
-       return self.select_answer_options(user_var_value)
 
 
 class Topic():
     def __init__(self, title:str, urls: List[str]):
         self.title = title
         self._urls = urls
-

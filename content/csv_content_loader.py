@@ -21,6 +21,7 @@ def content_loader(content_sources: Dict, content_folder: str) -> Dict[str, Cont
             headers = rows[0]
             body = rows[1:]
             new_content_sources[content_part] = Content_Part(headers, body)
-        except IOError:
+        except IOError as err:
             logging.info(f"error loading {content_file_name}")
+            logging.info(err)
     return  new_content_sources

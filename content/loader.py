@@ -12,13 +12,11 @@ content_dict = {
 
     "Bot Intro": "Bot Intro.csv",
     "User Intro": "User Intro.csv",
+    "Topics Selection": "Topics Selection.csv",
 
 }
 
-try:
-    bot_content = Bot_Content(content_loader=content_loader, content_sources=content_dict, content_folder= content_folder)
-    logging.info("content loaded")
-except:
-    bot_content = None
+bot_content = Bot_Content(content_loader=content_loader, content_sources=content_dict, content_folder= content_folder)
+logging.info("content loaded")
 
 users_base = Users_Base()

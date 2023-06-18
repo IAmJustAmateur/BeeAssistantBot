@@ -26,7 +26,6 @@ async def on_startup(dp: Dispatcher):
     commands_for_bot = [BotCommand(command = cmd.command, description = cmd.brief) for cmd in bot_content.bot_commands]
     await dp.bot.set_my_commands(commands_for_bot)
 
-
     dp.register_message_handler(start, state='*', commands=["start"])
     dp.register_callback_query_handler(bot_intro, state=Bot_States.BotIntro)
     dp.register_message_handler(user_intro_message, state=Bot_States.UserIntro)

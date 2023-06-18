@@ -2,7 +2,7 @@ from collections import namedtuple
 from typing import List, Dict, Callable
 import logging
 
-from content.topics_questions import Question
+from content.topics_questions import Question, TopicSelectionQuestion
 
 
 from content.bot_commands import Bot_Command
@@ -26,7 +26,7 @@ class Bot_Content():
         self.load_bot_intro()
         self.load_user_intro()
         self.load_commands()
-        #self.load_topic_selection()
+        self.load_topic_selection()
         #self.load_topics()
 
         logging.info("content loaded")
@@ -69,9 +69,23 @@ class Bot_Content():
             self.user_intro.append(question)
 
     def load_topic_selection(self):
-        content_part: Content_Part = self.content_sources["Topic Selection"]
+        content_part: Content_Part = self.content_sources["Topics Selection"]
         cells = content_part.Body
-        self_topic_selection = List[Question]
+        self.topic_selection: List[TopicSelectionQuestion] = []
+        messages: List[str] = []
+        for row in cells:
+            row = pad_or_truncate(row, 3)
+            bot_message_text = row[0]
+            user_var = row[1]
+            answer_options = get_json_value(row[2])
+            messages.append(bot_message_text)
+            if answer_options is not None:
+                question = TopicSelectionQuestion(messages, answer_options, user_var)
+                self.topic_selection.append(question)
+                messages = []
+
+
 
     def load_topics(self):
         content_part: Content_Part = self.content_sources["Topics"]
+
